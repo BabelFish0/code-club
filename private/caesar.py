@@ -1,7 +1,15 @@
-import sys
+def count_words(message:str, ref):
+	count = 0
+	for word in message.split(' '):
+		count += (word in ref)
+	return count
 
-message = sys.argv[1]
-shift = int(sys.argv[2])
+def decode(message:str, alph_len:int=26):
+	with open('../shared/resources/words.txt') as wordfile:
+		words = {word.strip('\n') for word in wordfile.readlines()}
+	scores = {shift:count_words(encode(message, shift, alph_len), words) for shift in range(26)}
+	best = max(scores, key=scores.get)
+	return encode(message, best, alph_len)
 
 def encode(message:str, shift:int, alph_len:int=26):
 	ords = [ord(c)-ord('a') if c != ' ' else -1 for c in [*message]]
@@ -9,6 +17,7 @@ def encode(message:str, shift:int, alph_len:int=26):
 	return "".join([chr(c) if c != -1 else ' ' for c in shifted])
 
 if __name__ == '__main__':
+	import sys
 	if len(sys.argv) == 4:
 		import random
 		seed = int(sys.argv[3])
@@ -16,6 +25,8 @@ if __name__ == '__main__':
 		messages = ['hello world', 'coding club', 'you get the idea', 'good bye']
 		content = r" \\[0.7in] \noindent{}".join([encode(message, random.randint(0,25)) for message in messages])
 	else:
+		message = sys.argv[1]
+		shift = int(sys.argv[2])
 		content = encode(message, shift)
 	latex_content = r"""
 	\documentclass{article}
