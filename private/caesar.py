@@ -9,7 +9,7 @@ def decode(message:str, alph_len:int=26):
 		words = {word.strip('\n') for word in wordfile.readlines()}
 	scores = {shift:count_words(encode(message, shift, alph_len), words) for shift in range(26)}
 	best = max(scores, key=scores.get)
-	return encode(message, best, alph_len)
+	return encode(message, best, alph_len), best
 
 def encode(message:str, shift:int, alph_len:int=26):
 	ords = [ord(c)-ord('a') if c != ' ' else -1 for c in [*message]]
